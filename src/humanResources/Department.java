@@ -1,11 +1,13 @@
 package humanResources;
 
+import java.util.Objects;
+
 /**
  * Created by ArthurArt on 13.03.2017.
  */
 
 
-public class Department {
+public class Department implements EmployeeGroup {
     private String name;
     private int employeesQuantity;
     private Employee[] employees;
@@ -38,7 +40,8 @@ public class Department {
         this.employeesQuantity = getEmployeesQuantity(employees);
     }
 
-    public void addEmployee(Employee employee) {
+    @Override
+    public void add(Employee employee) {
         if (employeesQuantity < employees.length) {
             employees[employeesQuantity] = employee;
         } else {
@@ -58,13 +61,13 @@ public class Department {
 
     }
 
-
-    public boolean deleteEmployee(String ferstName, String secondName) {
+    @Override
+    public boolean remove(String firstName, String secondName) {
         int j = 0;
         boolean boolBuf = false;
         for (int i = 0; i < employeesQuantity; i++, j++) {
 
-            if ((employees[i].getFerstName().equals(ferstName)) && (employees[i].getSecondName().equals(secondName))) {
+            if ((employees[i].getFirstName().equals(firstName)) && (employees[i].getSecondName().equals(secondName))) {
                 j++;
                 employeesQuantity--;
                 boolBuf = true;
@@ -77,20 +80,67 @@ public class Department {
         return boolBuf;
     }
 
-    public int getEmployeesQuantity() {
+    @Override
+    public boolean remove(Employee employee) {
+        int j = 0;
+        boolean boolBuf = false;
+        for (int i = 0; i < employeesQuantity; i++) {
+            if(employees[i].equals(employee)) {
+                j++;
+                employeesQuantity--;
+                boolBuf = true;
+            }
+        }
+        if (boolBuf) employees[employeesQuantity + 1] = null;
+        return boolBuf;
+    }
+
+    public void removeAll(JobTitlesEnum jobTitle){
+        for (int i = 0; i <employeesQuantity ; i++) {
+            if(employees[i].getJobTitle().equals(jobTitle) )
+                remove(employees[i]);
+        }
+    }
+
+
+    public Employee getEmployee(String firstName, String secondName){
+        for (int i = 0; i < employeesQuantity; i++)
+
+            if ((employees[i].getFirstName().equals(firstName)) && (employees[i].getSecondName().equals(secondName)))
+                return employees[i];
+
+          return  null;
+    }
+
+
+
+
+
+    @Override
+    public int employeeQuantity() {
         return employeesQuantity;
     }
+
+
+
+
 
     public Employee[] getEmployees() {
 
         return getCoopyArrayEmploeyees();
     }
 
+
+
+
+
+
+
     public Employee[] getEmployees(String jobPosition) {
         Employee[] employeesBuf = new Employee[employeesQuantity];
         int count = 0;
         for (int i = 0; i < employeesQuantity; i++) {
-            if (employees[i].getJobPosition().equals(jobPosition)) {
+            if (employees[i].getJobTitle().equals(jobPosition)) {
                 employeesBuf[count] = employees[i];
                 count++;
             }
@@ -99,6 +149,21 @@ public class Department {
         System.arraycopy(employeesBuf, 0, getEmpoyees, 0, count);
         return getEmpoyees;
     }
+//
+//    public  JobTitlesEnum[] getJobTitles(){
+//        JobTitlesEnum[] jobTitlesEnumBuf = new JobTitlesEnum[JobTitlesEnum.values().length];
+//        int count = 0;
+//        for (int i = 0; i < employeesQuantity; i++) {
+//            if (employees[i].getJobTitles().equals(jobTitles)) {
+//                JobTitlesEnum[count] = JobTitlesEnum[i];
+//                count++;
+//            }
+//        }
+//        Employee[] getEmpoyees = new Employee[count];
+//        System.arraycopy(employeesBuf, 0, getEmpoyees, 0, count);
+//        return getEmpoyees;
+//    }
+
 
     private Employee[] getCoopyArrayEmploeyees() {
         Employee[] employeesArrayCoopy = new Employee[employeesQuantity];
@@ -109,7 +174,8 @@ public class Department {
     }
 
 
-    public Employee[] getEmployeesArraySorted() {
+    @Override
+    public Employee[] sortedEmployees() {
         Employee[] employeesArraySorted = getCoopyArrayEmploeyees();
         Employee empBuf;
 
@@ -130,21 +196,39 @@ public class Department {
         return name;
     }
 
+    public void setName(String name){
+        this.name = name;
+    }
+
+
 
     public int getEmployeesQuantity(String jobPosition) {
         int count = 0;
         for (int i = 0; i < employeesQuantity; i++) {
-            if (employees[i].getJobPosition().equals(jobPosition)) count++;
+            if (employees[i].getJobTitle().equals(jobPosition)) count++;
         }
         return count;
     }
+    public int getEmployeesQuantity() {
+        return employeesQuantity;
+    }
 
-    public boolean foundEmployee(String FerstName, String SecondName) {
+    public boolean foundEmployee(String FirstName, String SecondName) {
         for (int i = 0; i < employeesQuantity; i++) {
-            if ((employees[i].getFerstName().equals(FerstName)) && (employees[i].getSecondName().equals(SecondName)))
+            if ((employees[i].getFirstName().equals(FirstName)) && (employees[i].getSecondName().equals(SecondName)))
                 return true;
         }
         return false;
+    }
+
+    @Override
+    public Employee mostVluableEmployee() {
+        Employee bufEmployeeWithMaxSalary = employees[0];
+        for (int i = 1; i < employeesQuantity; i++) {
+            if (employees[i].getSalary() > bufEmployeeWithMaxSalary.getSalary())
+                bufEmployeeWithMaxSalary = employees[i];
+        }
+        return bufEmployeeWithMaxSalary;
     }
 
     public Employee getBestEmployee() {
@@ -155,6 +239,59 @@ public class Department {
         }
         return bufEmployeeWithMaxSalary;
     }
+    @Override
+    public String toString() {
+        String result = "" + "humanResources.Department " + getName() + " " + employeesQuantity;
+        Employee[] emp = getEmployees();
+        for(int i=0;i<employeeQuantity();i++)
+        {
+            result += " " + emp[i].toString();
+        }
+        return result;
+    }
 
+
+    @Override
+         public boolean equals(Object obj) {
+        if (obj == null)
+            return false;
+        // проверка на случай, если сравнение с самим собой
+        if (obj == this)
+            return true;
+
+        if (getClass() != obj.getClass())
+            return false;
+        Department department = (Department) obj;
+        Employee[] empObj = department.getEmployees();
+        Employee[] empThis = getEmployees();
+        if(!department.toString().equals(this.toString()) && department.employeeQuantity() != this.employeeQuantity())
+        {
+            boolean flag = true;
+            for(int i=0; i<department.employeeQuantity();i++){
+                for(int j=0;j<this.employeeQuantity();j++)
+                {
+                    if(empObj[i].equals(empThis[j]))
+                    {
+                        flag  = true;
+                    }
+                    else{ flag = false; break;}
+                }
+            }
+            return flag;
+        }
+
+
+
+       return false;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = 0;
+        for(Employee emp : employees)
+            result ^= emp.hashCode();
+        return result ^= name.hashCode() ^ employeesQuantity;
+    }
 
 }

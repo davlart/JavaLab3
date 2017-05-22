@@ -48,7 +48,7 @@ public class NewTestClass {
         System.out.print(testDepartment.getName()+" "+
                 testDepartment.getEmployeesQuantity()+" "+
                 testDepartment.getEmployeesQuantity("Раб")+" "+
-                testDepartment.getBestEmployee().getFerstName());
+                testDepartment.getBestEmployee().getFirstName());
 
         Employee newEmp = new Employee("Гарри","Potter","Super worker",99999);
 
@@ -70,7 +70,7 @@ public class NewTestClass {
          Organization testO10N = new Organization("Google",testArDp);
         testO10N.addDepartment(testDepartment);
        // toScrean(testO10N.getDepartment("Гарри","Potter").getEmployees() );
-          System.out.println(testO10N.getBestEmployee().getFerstName());
+          System.out.println(testO10N.getBestEmployee().getFirstName());
 
         System.out.println(  testO10N.getEmployeesQuantity() );
         System.out.println(  testO10N.getEmployeesQuantity("Super worker") );
